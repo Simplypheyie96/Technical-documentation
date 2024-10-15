@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+  <title>CloudStore API Documentation</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <nav id="navbar">
+   <header id="main-header">CloudStore API Documentation</header>
+  <ul>
+    <li><a class="nav-link" href="#Introduction">Introduction</a></li>
+    <li><a class="nav-link" href="#Authentication">Authentication</a></li>
+    <li><a class="nav-link" href="#File_Operations">File Operations</a></li>
+    <li><a class="nav-link" href="#Folder_Management">Folder Management</a></li>
+    <li><a class="nav-link" href="#Sharing">Sharing</a></li>
+    <li><a class="nav-link" href="#Versioning">Versioning</a></li>
+    <li><a class="nav-link" href="#Search">Search</a></li>
+    <li><a class="nav-link" href="#Webhooks">Webhooks</a></li>
+    <li><a class="nav-link" href="#Rate_Limiting">Rate Limiting</a></li>
+    <li><a class="nav-link" href="#Error_Handling">Error Handling</a></li>
+  </ul>
+</nav>
+
+
+  </nav>
+  
+  <main id="main-doc">
+    <section class="main-section" id="Introduction">
+      <header>Introduction</header>
+      <p>Welcome to the CloudStore API documentation. CloudStore is a robust cloud storage solution that allows developers to integrate file storage, sharing, and management capabilities into their applications. This API provides a wide range of features to handle various aspects of cloud storage.</p>
+            <p>Our API is designed with RESTful principles, making it intuitive and easy to use. It supports a variety of operations including file uploads, downloads, sharing, and advanced search capabilities. Whether you're building a small application or a large-scale enterprise solution, CloudStore API offers the flexibility and scalability to meet your needs.</p>
+            <p>Throughout this documentation, you'll find detailed explanations, code examples, and best practices to help you make the most of CloudStore's features. We recommend starting with the Authentication section to set up your API access, then exploring the various endpoints and operations available.</p>
+            <p>Base URL for all API requests: <code>https://api.cloudstore.com/v1</code></p>
+    </section>
+    
+    <section class="main-section" id="Authentication">
+      <header>Authentication</header>
+         <p>CloudStore API uses OAuth 2.0 for authentication, ensuring secure access to your data. This industry-standard protocol allows you to grant limited access to your CloudStore resources without exposing your credentials.</p>
+            <p>To use the API, you'll need to obtain an access token. This token should be included with every API request to authenticate your application. Access tokens are temporary and can be easily revoked, providing an additional layer of security.</p>
+            <p>We support multiple OAuth 2.0 flows, including the Authorization Code flow for web applications and the Client Credentials flow for server-to-server integrations. Choose the flow that best fits your application's architecture and security requirements.</p>
+            <p>Remember to keep your client secrets and access tokens secure. Never expose them in client-side code or public repositories.</p>
+
+ <h3>Obtaining an Access Token</h3>
+
+  <pre><code>
+POST https://api.cloudstore.com/oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET
+  </code></pre>
+<p>The response will include an <code>access_token</code> which you should include in the Authorization header of all subsequent requests:</p>
+
+ <pre><code>
+Authorization: Bearer YOUR_ACCESS_TOKEN
+            </code></pre>
+    </section>
+    
+    <section class="main-section" id="File_Operations">
+      <header>File Operations</header>
+       <p>File operations are at the core of CloudStore's functionality. Our API provides a comprehensive set of endpoints to manage files, allowing you to perform actions such as uploading, downloading, and deleting files with ease.</p>
+            <p>When working with files, it's important to consider factors like file size limits, supported file types, and potential timeout issues for large file transfers. CloudStore supports resumable uploads for large files, ensuring that your file transfers are reliable even in unstable network conditions.</p>
+            <p>All file operations are performed over HTTPS, ensuring that your data remains encrypted in transit. Additionally, files are encrypted at rest using industry-standard encryption algorithms, providing an extra layer of security for your sensitive data.</p>
+            <p>Below, you'll find examples of common file operations. Note that these operations require authentication, so make sure to include your access token in the request headers.</p>
+            <h3>Uploading a File</h3>
+            <p>To upload a file, send a POST request to the /files endpoint:</p>
+            <pre><code>
+POST /files
+Content-Type: multipart/form-data
+
+file: [binary data]
+path: /documents/report.pdf
+            </code></pre>
+            <h3>Downloading a File</h3>
+            <p>To download a file, send a GET request to the /files/{file_id} endpoint:</p>
+            <pre><code>
+GET /files/1234567890
+            </code></pre>
+            <h3>Deleting a File</h3>
+            <p>To delete a file, send a DELETE request to the /files/{file_id} endpoint:</p>
+            <pre><code>
+DELETE /files/1234567890
+            </code></pre>
+    </section>
+    
+    <section class="main-section" id="Folder_Management">
+      <header>Folder Management</header>
+       <p>Effective folder management is crucial for organizing your files in CloudStore. Our API provides a set of endpoints that allow you to create, modify, and navigate folder structures, giving you full control over your data organization.</p>
+            <p>Folders in CloudStore can be nested to create hierarchies, allowing for complex organizational structures. Each folder has a unique identifier, which you'll use when performing operations like moving files or creating subfolders.</p>
+            <p>It's important to note that folder operations may have cascading effects. For example, deleting a folder will also delete all its contents, including subfolders and files. Always use these operations with caution and implement appropriate confirmation steps in your application.</p>
+            <p>Below are examples of common folder management operations. Remember to include your authentication token in all requests.</p>
+            <h3>Creating a Folder</h3>
+            <p>To create a new folder, send a POST request to the /folders endpoint:</p>
+            <pre><code>
+POST /folders
+Content-Type: application/json
+
+{
+  "name": "New Folder",
+  "parent_id": "0987654321"
+}
+            </code></pre>
+            <h3>Listing Folder Contents</h3>
+            <p>To list the contents of a folder, send a GET request to the /folders/{folder_id}/contents endpoint:</p>
+            <pre><code>
+GET /folders/0987654321/contents
+            </code></pre>
+    </section>
+    
+    <section class="main-section" id="Sharing">
+      <header>Sharing</header>
+      <p>Sharing is a key feature of CloudStore, allowing users to collaborate and distribute their files and folders efficiently. Our API provides robust sharing capabilities, enabling you to control access to your resources with fine-grained permissions.</p>
+            <p>When sharing files or folders, you can specify the level of access for each recipient, ranging from view-only to full edit permissions. You can also set expiration dates for shared links, ensuring that access is revoked after a certain time period.</p>
+            <p>It's important to consider the security implications of sharing. Always ensure that sensitive data is only shared with trusted parties, and consider using features like password protection for public links when dealing with confidential information.</p>
+            <p>Below are examples of how to share files and folders using the CloudStore API. As always, remember to authenticate your requests with your access token.</p>
+            <h3>Sharing with Users</h3>
+            <pre><code>
+POST /share
+Content-Type: application/json
+
+{
+  "item_id": "1234567890",
+  "type": "file",
+  "email": "user@example.com",
+  "permission": "edit"
+}
+            </code></pre>
+            <h3>Generating a Public Link</h3>
+            <pre><code>
+POST /share/public
+Content-Type: application/json
+
+{
+  "item_id": "0987654321",
+  "type": "folder",
+  "expiration": "2024-12-31T23:59:59Z"
+}
+            </code></pre>
+    </section>
+    
+    <section class="main-section" id="Versioning">
+      <header>Versioning</header>
+       <p>Versioning is a powerful feature of CloudStore that automatically maintains a history of changes made to your files. This allows you to track modifications, revert to previous versions, and ensure that no data is accidentally lost.</p>
+            <p>Each time a file is modified, CloudStore creates a new version while retaining the previous ones. This version history allows you to see how a file has changed over time, who made the changes, and when they were made. You can retrieve or restore any previous version of a file as needed.</p>
+            <p>Versioning is particularly useful for collaborative work environments, where multiple users might be editing the same files. It provides a safety net against accidental changes or deletions, and allows you to review the evolution of a document over time.</p>
+            <p>Below are examples of how to interact with file versions using the CloudStore API. As with all API requests, make sure to include your authentication token.</p>
+            <h3>Listing File Versions</h3>
+            <pre><code>
+GET /files/1234567890/versions
+            </code></pre>
+            <h3>Restoring a Previous Version</h3>
+            <pre><code>
+POST /files/1234567890/restore
+Content-Type: application/json
+
+{
+  "version_id": "v2"
+}
+            </code></pre>
+    </section>
+    
+    <section class="main-section" id="Search">
+      <header>Search</header>
+      <p>CloudStore's search functionality allows you to quickly find files and folders within your storage space. Our API provides powerful search capabilities that go beyond simple filename matching, enabling you to locate your data efficiently even in large and complex storage structures.</p>
+            <p>The search feature supports various criteria including file names, content (for text-based files), metadata, and even the content of certain file types like PDFs or Word documents. You can combine multiple search parameters to create complex queries that pinpoint exactly what you're looking for.</p>
+            <p>Search results are paginated to ensure quick response times even for large result sets. You can specify the number of results per page and navigate through the pages of results as needed.</p>
+            <p>It's important to note that search operations can be resource-intensive, especially for large storage accounts. Consider implementing caching mechanisms in your application to improve performance for frequent searches.</p>
+            <h3>Basic Search</h3>
+            <pre><code>
+GET /search?query=project+report
+            </code></pre>
+            <h3>Advanced Search</h3>
+            <pre><code>
+GET /search?query=report&file_type=pdf&modified_after=2023-01-01T00:00:00Z
+            </code></pre>
+    </section>
+    
+    <section class="main-section" id="Webhooks">
+      <header>Webhooks</header>
+      <p>Webhooks provide a powerful way to receive real-time notifications about events occurring in your CloudStore account. Instead of constantly polling the API for changes, you can set up webhooks to notify your application immediately when specific events occur.</p>
+            <p>CloudStore supports a wide range of events that can trigger webhooks, including file uploads, modifications, deletions, sharing changes, and more. When an event occurs, CloudStore will send an HTTP POST request to the URL you specify, containing details about the event.</p>
+            <p>Implementing webhooks can significantly improve the responsiveness and efficiency of your application. However, it's important to ensure that your webhook endpoint is secure and can handle the expected volume of notifications. We recommend implementing authentication for your webhook endpoint and setting up retry logic for failed webhook deliveries.</p>
+            <p>Below are examples of how to register a webhook and what a webhook payload might look like. Remember to include your API authentication token when setting up webhooks.</p>
+            <h3>Registering a Webhook</h3>
+            <pre><code>
+POST /webhooks
+Content-Type: application/json
+
+{
+  "url": "https://your-app.com/webhook",
+  "events": ["file.uploaded", "file.shared", "folder.created"]
+}
+            </code></pre>
+            <h3>Webhook Payload Example</h3>
+            <pre><code>
+{
+  "event": "file.uploaded",
+  "file_id": "1234567890",
+  "name": "report.pdf",
+  "size": 1048576,
+  "uploaded_by": "user@example.com",
+  "timestamp": "2024-03-15T14:30:00Z"
+}
+            </code></pre>
+    </section>
+    
+    <section class="main-section" id="Rate_Limiting">
+      <header>Rate Limiting</header>
+       <p>To ensure fair usage and maintain service stability, CloudStore implements rate limiting on API requests. Rate limiting helps prevent any single client from overwhelming our servers with too many requests in a short period, ensuring a consistent experience for all users.</p>
+            <p>Our rate limits are based on the number of requests made within a specific time window, typically per minute. The exact limits depend on your account type, with higher tiers generally allowing for more requests. If you exceed the rate limit, your requests will be temporarily blocked until the next time window begins.</p>
+            <p>It's important to design your application with these rate limits in mind. Implement proper error handling to catch rate limit errors, and consider implementing exponential backoff and retry mechanisms for important operations. For high-volume operations, you may want to implement request queuing in your application to smooth out traffic spikes.</p>
+            <h3>Rate Limit Table</h3>
+            <table>
+                <tr>
+                    <th>Account Type</th>
+                    <th>Requests per Minute</th>
+                    <th>Burst Limit</th>
+                </tr>
+                <tr>
+                    <td>Free</td>
+                    <td>60</td>
+                    <td>100</td>
+                </tr>
+                <tr>
+                    <td>Pro</td>
+                    <td>300</td>
+                    <td>500</td>
+                </tr>
+                <tr>
+                    <td>Enterprise</td>
+                    <td>1000</td>
+                    <td>2000</td>
+                </tr>
+            </table>
+            <h3>Rate Limit Headers</h3>
+            <p>CloudStore includes rate limit information in the response headers:</p>
+            <ul>
+                <li><code>X-RateLimit-Limit</code>: The maximum number of requests you're permitted to make per minute.</li>
+                <li><code>X-RateLimit-Remaining</code>: The number of requests remaining in the current rate limit window.</li>
+                <li><code>X-RateLimit-Reset</code>: The time at which the current rate limit window resets in UTC epoch seconds.</li>
+            </ul>
+            <h3>Handling Rate Limit Errors</h3>
+            <p>If you exceed the rate limit, you'll receive a 429 (Too Many Requests) response. Here's an example of how to handle this:</p>
+            <pre><code>
+function makeApiRequest() {
+    fetch('https://api.cloudstore.com/v1/endpoint')
+        .then(response => {
+            if (response.status === 429) {
+                const retryAfter = response.headers.get('Retry-After');
+                console.log(`Rate limit exceeded. Retry after ${retryAfter} seconds`);
+                // Implement retry logic here
+            } else {
+                // Handle successful response
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+            </code></pre>
+    </section>
+    
+    <section class="main-section" id="Error_Handling">
+      <header>Error Handling</header>
+        <p>Proper error handling is crucial for building robust applications that integrate with the CloudStore API. Our API uses standard HTTP response codes to indicate the success or failure of requests. Here's an overview of common error scenarios and how to handle them:</p>
+            <header>Common HTTP Status Codes</header>
+            <ul>
+                <li><strong>200 OK</strong>: The request was successful.</li>
+                <li><strong>201 Created</strong>: The request was successful and a resource was created.</li>
+                <li><strong>400 Bad Request</strong>: The request was invalid or cannot be served.</li>
+                <li><strong>401 Unauthorized</strong>: The request requires authentication.</li>
+                <li><strong>403 Forbidden</strong>: The server understood the request but refuses to authorize it.</li>
+                <li><strong>404 Not Found</strong>: The requested resource could not be found.</li>
+                <li><strong>429 Too Many Requests</strong>: You have exceeded the rate limit.</li>
+                <li><strong>500 Internal Server Error</strong>: The server encountered an unexpected condition that prevented it from fulfilling the request.</li>
+            </ul>
+            <h3>Error Response Format</h3>
+            <p>When an error occurs, the API will return a JSON object with details about the error:</p>
+            <pre><code>
+{
+  "error": {
+    "code": "invalid_request",
+    "message": "The request was invalid. Please check your parameters.",
+    "details": {
+      "field": "email",
+      "issue": "Invalid email format"
+    }
+  }
+}
+            </code></pre>
+            <h3>Best Practices for Error Handling</h3>
+            <ol>
+                <li>Always check the HTTP status code of the response.</li>
+                <li>Parse the error message and details from the response body.</li>
+                <li>Implement appropriate retry logic for transient errors (e.g., rate limiting, temporary server issues).</li>
+                <li>Log errors for debugging and monitoring purposes.</li>
+                <li>Provide clear and helpful error messages to your users.</li>
+            </ol>
+            <h3>Example Error Handling</h3>
+            <pre><code>
+async function handleApiRequest(url, options) {
+    try {
+        const response = await fetch(url, options);
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error.message || 'An error occurred');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('API Error:', error);
+        // Handle the error appropriately (e.g., show a user-friendly message)
+        throw error;
+    }
+}
+            </code></pre>
+            <p>By implementing robust error handling, you can create a more reliable and user-friendly application that gracefully manages API interactions and provides clear feedback to your users.</p>
+    </section>
+  </main>
+</body>
+</html>
